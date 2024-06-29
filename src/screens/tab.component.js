@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { BottomTab } from './bottomtab';
+import { BottomTab } from './src/components/bottomtab';
 
 const App = () => {
   return (
