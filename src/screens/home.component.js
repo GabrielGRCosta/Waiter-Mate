@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, StatusBar } from 'react-native';
 import { Button, Divider, Layout, TopNavigation } from '@ui-kitten/components';
 
 export const HomeScreen = ({ navigation }) => {
@@ -8,7 +8,8 @@ export const HomeScreen = ({ navigation }) => {
     navigation.navigate('Details');
   };
 
-  return (
+  return <>
+    <StatusBar barStyle="dark-content" />
     <SafeAreaView style={{ flex: 1 }}>
       <TopNavigation title='MyApp' alignment='center'/>
       <Divider/>
@@ -16,5 +17,5 @@ export const HomeScreen = ({ navigation }) => {
         <Button onPress={navigateDetails}>OPEN DETAILS</Button>
       </Layout>
     </SafeAreaView>
-  );
+  </>;
 };
