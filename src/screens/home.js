@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, FlatList, TouchableOpacity,View} from 'react-native';
-import { Divider, ListItem, Icon ,Text} from '@ui-kitten/components';
+import { StyleSheet, FlatList, TouchableOpacity, View} from 'react-native';
+import { Divider, ListItem, Icon, Text} from '@ui-kitten/components';
 
 const mesas = new Array(20).fill(null).map((_, index) => ({
   id: index + 1,
