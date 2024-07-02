@@ -1,30 +1,8 @@
-import React from 'react';
-import { BottomNavigation, BottomNavigationTab, Icon, IconElement } from '@ui-kitten/components';
+import { useState } from 'react'
+import { BottomNavigation, BottomNavigationTab, Icon } from '@ui-kitten/components'
 
-const PersonIcon = (props): IconElement => (
-  <Icon
-    {...props}
-    name='person-outline'
-  />
-);
-
-const BellIcon = (props): IconElement => (
-  <Icon
-    {...props}
-    name='bell-outline'
-  />
-);
-
-const EmailIcon = (props): IconElement => (
-  <Icon
-    {...props}
-    name='email-outline'
-  />
-);
-
-export const BottomTab = (): React.ReactElement => {
-
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+export const BottomTab = () => {
+  const [selectedIndex, setSelectedIndex] = useState(0)
 
   return (
     <BottomNavigation
@@ -32,17 +10,20 @@ export const BottomTab = (): React.ReactElement => {
       onSelect={index => setSelectedIndex(index)}
     >
       <BottomNavigationTab
-        icon={PersonIcon}
-        title='USERS'
+        icon={
+          <Icon name='person-outline'/>
+        }
       />
       <BottomNavigationTab
-        icon={BellIcon}
-        title='ORDERS'
+        icon={
+          <Icon name='bell-outline'/>
+        }
       />
       <BottomNavigationTab
-        icon={EmailIcon}
-        title='TRANSACTIONS'
+        icon={
+          <Icon name='email-outline'/>
+        }
       />
     </BottomNavigation>
-  );
-};
+  )
+}

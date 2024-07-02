@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, FlatList, TouchableOpacity, View} from 'react-native';
-import { Divider, ListItem, Icon, Text} from '@ui-kitten/components';
+import { StyleSheet, FlatList, TouchableOpacity, View } from 'react-native';
+import { Divider, ListItem, Icon, Text, TopNavigation, Layout } from '@ui-kitten/components';
 
 const mesas = new Array(20).fill(null).map((_, index) => ({
   id: index + 1,
@@ -42,11 +42,15 @@ export const HomeScreen = ({ navigation }) => {
     </TouchableOpacity>
   );
 
+      //<Layout>
+      //</Layout>
   return (
     <View>
-      <Text style={styles.pageTitle}>
-        MESAS
-      </Text>
+        <TopNavigation
+          alignment='center'
+          title='MESAS'
+          style={styles.pageTitle}
+        />
       <FlatList
         data={mesas}
         renderItem={renderItem}
@@ -56,7 +60,7 @@ export const HomeScreen = ({ navigation }) => {
         contentContainerStyle={styles.listContentContainer}
         style={styles.container}
       />
-     </View>
+    </View>
   );
 };
 
@@ -81,10 +85,6 @@ const styles = StyleSheet.create({
     marginBottom:10
   },
   pageTitle: {
-    fontSize: 24, // Tamanho grande para o título
-    textDecorationLine: 'underline', // Sublinha o texto
-    textAlign: 'center', // Centraliza o texto
-    marginVertical: 30, // Adiciona espaço vertical antes e depois do título
-    color: 'blue', // Cor do texto
+    marginTop: 20,
   },
 });
