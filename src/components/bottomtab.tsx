@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import React from 'react'
 import { BottomNavigation, BottomNavigationTab, Icon } from '@ui-kitten/components'
 
 export const BottomTab = () => {
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [selectedIndex, setSelectedIndex] = React.useState(0)
 
   return (
     <BottomNavigation
