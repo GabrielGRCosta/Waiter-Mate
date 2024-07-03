@@ -11,17 +11,17 @@ export const BottomTab = () => {
     >
       <BottomNavigationTab
         icon={
+          <Icon name='edit-2-outline'/>
+        }
+      />
+      <BottomNavigationTab
+        icon={
+          <Icon name='book-open-outline'/>
+        }
+      />
+      <BottomNavigationTab
+        icon={
           <Icon name='person-outline'/>
-        }
-      />
-      <BottomNavigationTab
-        icon={
-          <Icon name='bell-outline'/>
-        }
-      />
-      <BottomNavigationTab
-        icon={
-          <Icon name='email-outline'/>
         }
       />
     </BottomNavigation>
