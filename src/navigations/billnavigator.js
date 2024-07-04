@@ -1,7 +1,7 @@
 // BillNavigator.js
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import BillScreen from '../screens/bill'; 
+import {BillScreen} from '../screens/bill'; 
 
 const Stack = createStackNavigator();
 
