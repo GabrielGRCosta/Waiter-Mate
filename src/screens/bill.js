@@ -1,34 +1,49 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import { Divider, List, ListItem, Icon, TopNavigation, TopNavigationAction, Layout, Button, useTheme } from '@ui-kitten/components';
+import { TouchableOpacity } from 'react-native';
+import { Divider, List, ListItem, Card, Text, Icon, TopNavigation, TopNavigationAction, Layout, Button, useTheme } from '@ui-kitten/components';
 
-const items = [
-    { name: '1 Pizza Mozzarella G'   },
-    { name: '1 Pizza Pepperoni G'    },
-    { name: '1 Pizza Pepperoni G'    },
-    { name: '1/2 Pizza Margherita G' },
-    { name: '1/2 Pizza Portuguese G'   },
-    { name: '1 Pizza Chicken G'      },
-    { name: '1/4 Pizza Chocolate G'  },
-    { name: '1/4 Pizza White Chocolate G'  },
-    { name: '1/4 Pizza Pineapple G'  },
-    { name: '1/4 Pizza Vanilla Icecream G' },
-].map((e, i) => ({ id: i+1, ...e }));
+const orders = [
+  {
+    id: 0, ord: 1,
+    status: 'served',
+    items: [
+      { id: 0, name: '1/2 Pizza Mozzarella G' },
+      { id: 1, name: '1/2 Pizza Pepperoni G'  },
+      { id: 2, name: '1 Jar Lemonade'         },
+    ],
+  },
+  {
+    id: 1, ord: 2,
+    status: 'waiting',
+    items: [
+      { id: 0, name: '1 Jar Orange'           },
+    ],
+  },
+];
 
 export const BillScreen = ({ navigation }) => {
   const theme = useTheme();
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-      <ListItem
-        title={`${item.id}#--  ${item.name}`}
-        description={item.observation || ''}
-        accessoryLeft={
-          <Icon name='clock-outline' />
-        }
-        style={{ backgroundColor: theme['background-basic-color-2']}}
+  const renderOrder = ({ item: order }) => (
+    <Card
+      status={order.status === 'served' ? 'success' : order.status == 'waiting' ? 'warning' : 'danger' }
+      header={<Text>Pedido #{order.ord}</Text>}
+      style={{ marginBottom: 5 }}
+    >
+      <List
+        data={order.items}
+        renderItem={({ index, item }) => (
+          <ListItem
+            title={`${item.name}`}
+            description={item.observation || ''}
+            accessoryLeft={
+              <Icon name='chevron-right-outline' />
+            }
+          />
+        )}
+        keyExtractor={item => item.id}
       />
-    </TouchableOpacity>
+    </Card>
   );
 
   return (
@@ -49,33 +64,31 @@ export const BillScreen = ({ navigation }) => {
       <Divider />
       <Layout style={{ padding: 15, flex: 1 }}>
         <List
-          data={items}
-          renderItem={renderItem}
-          keyExtractor={item => item.id.toString()}
-          ItemSeparatorComponent={Divider}
+          data={orders}
+          renderItem={renderOrder}
+          keyExtractor={order => order.id}
           style={{ padding: 10 }}
         />
       </Layout>
       <Layout style={{ padding: 15, flexDirection: 'row', justifyContent: 'space-between' }}>
         <Button
           status='danger'
-          styles={{ flex: 3 }}
           accessoryLeft={
             <Icon name='trash-2-outline' />
           }
+          styles={{ flex: 3 }}
         >
           Encerrar
         </Button>
         <Button
-          status='warning'
-          styles={{ flex: 3 }}
           accessoryLeft={
             <Icon name='bell-outline' />
           }
+          styles={{ flex: 3 }}
         >
           Cozinha
         </Button>
-        <Button
+        <Button onPress={() => navigation.navigate('Order')}
           accessoryLeft={
             <Icon name='plus' />
           }
@@ -85,7 +98,3 @@ export const BillScreen = ({ navigation }) => {
     </Layout>
   );
 };
-
-const styles = StyleSheet.create({
-    //i simply inlined all styles lol
-});
