@@ -13,7 +13,7 @@ export const HomeScreen = ({ navigation }) => {
   const renderItem = (item) => (
     <TouchableOpacity
       key={item.id}
-      onPress={() => navigation.navigate('Bill', { tableId: item.id })}
+      onPress={() => navigation.navigate('BillNav', { screen: 'Bill', tableId: item.id })}
       style={styles.touchableArea}
       activeOpacity={0.7}
     >

@@ -1,12 +1,11 @@
-// AuthNavigator.js
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import {LoginScreen} from '../screens/login'; 
+import { LoginScreen } from '../screens/login'; 
 
-const Stack = createStackNavigator();
+const { Navigator, Screen } = createStackNavigator();
 
 export const AuthNavigator = () => (
-  <Stack.Navigator>
-    <Stack.Screen name="Login" component={LoginScreen} />
-  </Stack.Navigator>
+  <Navigator>
+    <Screen name='Login' component={LoginScreen} />
+  </Navigator>
 );
