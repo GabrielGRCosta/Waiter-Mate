@@ -1,16 +1,16 @@
 import React, { useState, createContext, useEffect } from 'react';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as firebaseSignOut } from "firebase/auth";
-import { firebase } from '../config/firebaseConnection'; // Ajuste o caminho de importação conforme necessário
+import { firebase } from '../config/firebaseConnection';
 
-// Criando um contexto de autenticação
+
 export const AuthContext = createContext({});
 
 function AuthProvider ({ children }) {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState(null);
-  const auth = getAuth(firebase); // Obtém a instância de autenticação
+  const auth = getAuth(firebase);
 
-  // Função para tratar mudanças de estado do usuário
+ 
   function onAuthStateChanged(user) {
     setUser(user);
     if (initializing) setInitializing(false);
@@ -18,10 +18,10 @@ function AuthProvider ({ children }) {
 
   useEffect(() => {
     const subscriber = auth.onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // Desinscrever na desmontagem
+    return subscriber; 
   }, []);
 
- // Funções de autenticação modificadas para funções assíncronas
+
 function test() {
   console.log("tentei lulalala");
 }
@@ -30,7 +30,7 @@ function test() {
 async function signIn(email, password) {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    setUser(userCredential.user); // Atualiza o estado do usuário com o usuário autenticado
+    setUser(userCredential.user); 
   } catch (e) {
     console.error(e);
   }

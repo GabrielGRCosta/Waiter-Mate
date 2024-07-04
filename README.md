@@ -11,3 +11,8 @@ to:
 '../../src/App'
 ```
 Otherwise, Expo will fail to run.
+
+## User in Login
+
+Email: test@test.com
+password: 123456

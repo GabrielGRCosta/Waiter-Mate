@@ -1,7 +1,7 @@
 // AuthNavigator.js
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import {LoginScreen} from '../screens/login'; // Supondo que você tenha uma tela de login
+import {LoginScreen} from '../screens/login'; 
 
 const Stack = createStackNavigator();
 

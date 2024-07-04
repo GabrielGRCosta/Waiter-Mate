@@ -18,7 +18,7 @@ useEffect(() => {
 
     return (
         <Layout style={styles.container}>
-        <Text category='h1' style={styles.title}>Login</Text>
+        <Text category='h1' style={styles.title}>WaiterMate</Text>
         <Input
             placeholder='Email'
             value={email}
