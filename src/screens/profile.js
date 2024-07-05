@@ -1,27 +1,45 @@
-import React, { useState, useContext } from 'react';
-import { StyleSheet, TouchableOpacity, Image, View } from 'react-native';
-import { Layout, Text, Input, Button } from '@ui-kitten/components';
-import { AuthContext } from '../context/auth';
+import React, { useState, useContext } from "react";
+import { StyleSheet, TouchableOpacity, Image, View } from "react-native";
+import {
+  Layout,
+  Text,
+  Input,
+  Button,
+  TopNavigation,
+  TopNavigationAction,
+  Icon,
+} from "@ui-kitten/components";
+import { AuthContext } from "../context/auth";
 
-export const ProfileScreen = () => {
-  const [userName, setUserName] = useState('Nome do Usuário');
-  const [userEmail, setUserEmail] = useState('email@exemplo.com');
-  const [userPhone, setUserPhone] = useState('Número de Telefone');
-  const [userRole, setUserRole] = useState('Função do Usuário');
-  const [userAvatar, setUserAvatar] = useState('https://i.pravatar.cc/300');
+export const ProfileScreen = ({ navigation }) => {
+  const [userName, setUserName] = useState("Nome do Usuário");
+  const [userEmail, setUserEmail] = useState("email@exemplo.com");
+  const [userPhone, setUserPhone] = useState("Número de Telefone");
+  const [userRole, setUserRole] = useState("Função do Usuário");
+  const [userAvatar, setUserAvatar] = useState("https://i.pravatar.cc/300");
   const { signOut } = useContext(AuthContext);
 
   const selectImage = () => {
-    
-    console.log('Abrir galeria para selecionar uma nova imagem');
+    console.log("Abrir galeria para selecionar uma nova imagem");
   };
 
   const saveProfile = () => {
-    console.log('Salvar modificações do perfil');
+    console.log("Salvar modificações do perfil");
   };
 
   return (
     <Layout style={styles.container}>
+      <TopNavigation
+        alignment="center"
+        title="Comanda"
+        accessoryLeft={
+          <TopNavigationAction
+            icon={<Icon name="arrow-back" />}
+            onPress={navigation.goBack}
+          />
+        }
+        style={{ marginTop: 30 }}
+      />
       <View style={styles.avatarSection}>
         <TouchableOpacity onPress={selectImage}>
           <Image source={{ uri: userAvatar }} style={styles.avatar} />
@@ -30,29 +48,29 @@ export const ProfileScreen = () => {
       <Layout style={styles.inputSection}>
         <Input
           value={userName}
-          label='Nome'
-          placeholder='Digite seu nome'
+          label="Nome"
+          placeholder="Digite seu nome"
           onChangeText={setUserName}
           style={styles.input}
         />
         <Input
           value={userEmail}
-          label='Email'
-          placeholder='Digite seu email'
+          label="Email"
+          placeholder="Digite seu email"
           onChangeText={setUserEmail}
           style={styles.input}
         />
         <Input
           value={userPhone}
-          label='Telefone'
-          placeholder='Digite seu telefone'
+          label="Telefone"
+          placeholder="Digite seu telefone"
           onChangeText={setUserPhone}
           style={styles.input}
         />
         <Input
           value={userRole}
-          label='Função'
-          placeholder='Digite sua função'
+          label="Função"
+          placeholder="Digite sua função"
           onChangeText={setUserRole}
           style={styles.input}
         />
@@ -62,13 +80,15 @@ export const ProfileScreen = () => {
         </Button>
 
         <Button
-            onPress={async () => {
-                await signOut();
-                navigation.navigate('Login');
-            }}
-            style={styles.exitButton}
-        > Sair</Button>
-
+          onPress={async () => {
+            await signOut();
+            navigation.navigate("Login");
+          }}
+          style={styles.exitButton}
+        >
+          {" "}
+          Sair
+        </Button>
       </Layout>
     </Layout>
   );
@@ -81,8 +101,8 @@ const styles = StyleSheet.create({
   },
   avatarSection: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   inputSection: {
     flex: 2,
@@ -100,6 +120,6 @@ const styles = StyleSheet.create({
   },
   exitButton: {
     marginTop: 20,
-    backgroundColor: 'red',
+    backgroundColor: "red",
   },
 });

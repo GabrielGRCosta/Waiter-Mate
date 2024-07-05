@@ -1,10 +1,11 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { AuthNavigator } from './authnavigator';
-import { AppNavigator } from './appnavigator'; 
-import { BillNavigator } from './billnavigator';
-import { AuthContext } from '../context/auth'; 
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { AuthNavigator } from "./authnavigator";
+import { AppNavigator } from "./appnavigator";
+import { BillNavigator } from "./billnavigator";
+import { HomeNavigator } from "./homenavigator";
+import { AuthContext } from "../context/auth";
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -16,11 +17,11 @@ export const RootNavigator = () => {
       <Navigator screenOptions={{ headerShown: false }}>
         {true ? (
           <>
-            <Screen name='AppNav'  component={AppNavigator} />
-            <Screen name='BillNav' component={BillNavigator} />
+            <Screen name="HomeNav" component={HomeNavigator} />
+            <Screen name="AppNav" component={AppNavigator} />
           </>
         ) : (
-          <Screen name='AuthNav' component={AuthNavigator} />
+          <Screen name="AuthNav" component={AuthNavigator} />
         )}
       </Navigator>
     </NavigationContainer>

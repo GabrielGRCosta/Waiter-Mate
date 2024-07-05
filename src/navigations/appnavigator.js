@@ -1,18 +1,27 @@
-import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { BottomNavigation, BottomNavigationTab, Layout, Text,Icon } from '@ui-kitten/components';
-import { MenuScreen } from '../screens/menu';
-import { HomeScreen } from '../screens/home';
-import { ProfileScreen } from '../screens/profile';
+import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  BottomNavigation,
+  BottomNavigationTab,
+  Layout,
+  Text,
+  Icon,
+} from "@ui-kitten/components";
+import { MenuScreen } from "../screens/menu";
+import { HomeScreen } from "../screens/home";
+import { ProfileScreen } from "../screens/profile";
+import { BillScreen } from "../screens/bill";
 
 const BottomTabBar = ({ navigation, state }) => (
   <BottomNavigation
     selectedIndex={state.index}
-    onSelect={index => navigation.navigate(state.routeNames[index])}
+    onSelect={(index) => navigation.navigate(state.routeNames[index])}
   >
-    <BottomNavigationTab title='Mesas'    icon={<Icon name='edit-2-outline'/>}    />
-    <BottomNavigationTab title='Cardapio' icon={<Icon name='book-open-outline'/>} />
-    <BottomNavigationTab title='Perfil'   icon={<Icon name='person-outline'/>}    />
+    <BottomNavigationTab title="Comanda" icon={<Icon name="list" />} />
+    <BottomNavigationTab
+      title="Cardapio"
+      icon={<Icon name="book-open-outline" />}
+    />
   </BottomNavigation>
 );
 
@@ -21,10 +30,9 @@ const { Navigator, Screen } = createBottomTabNavigator();
 export const AppNavigator = () => (
   <Navigator
     screenOptions={{ headerShown: false }}
-    tabBar={props => <BottomTabBar {...props} />}
+    tabBar={(props) => <BottomTabBar {...props} />}
   >
-    <Screen name='Mesas'    component={HomeScreen}    />
-    <Screen name='Cardapio' component={MenuScreen}    />
-    <Screen name='Perfil'   component={ProfileScreen} />
+    <Screen name="Comanda" component={BillScreen} />
+    <Screen name="Cardapio" component={MenuScreen} />
   </Navigator>
 );
