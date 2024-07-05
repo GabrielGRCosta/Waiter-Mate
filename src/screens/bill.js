@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { Divider, List, ListItem, Card, Text, Icon, TopNavigation, TopNavigationAction, Layout, Button, useTheme } from '@ui-kitten/components';
+import { Divider, List, ListItem, Card, Text, Icon, TopNavigation, TopNavigationAction, Layout, Button } from '@ui-kitten/components';
 
 const orders = [
   {
@@ -22,28 +22,29 @@ const orders = [
 ];
 
 export const BillScreen = ({ navigation }) => {
-  const theme = useTheme();
-
+  //<TouchableOpacity onPress={() => navigation.navigate('BillNav', { screen: 'Order', params: { order: order }})}>
   const renderOrder = ({ item: order }) => (
-    <Card
-      status={order.status === 'served' ? 'success' : order.status == 'waiting' ? 'warning' : 'danger' }
-      header={<Text>Pedido #{order.ord}</Text>}
-      style={{ marginBottom: 5 }}
-    >
-      <List
-        data={order.items}
-        renderItem={({ index, item }) => (
-          <ListItem
-            title={`${item.name}`}
-            description={item.observation || ''}
-            accessoryLeft={
-              <Icon name='chevron-right-outline' />
-            }
-          />
-        )}
-        keyExtractor={item => item.id}
-      />
-    </Card>
+    <TouchableOpacity onPress={() => navigation.navigate('Order', {order: order})}>
+      <Card
+        status={order.status === 'served' ? 'success' : order.status == 'waiting' ? 'warning' : 'danger' }
+        header={<Text>Pedido #{order.ord}</Text>}
+        style={{ marginBottom: 5 }}
+      >
+        <List
+          data={order.items}
+          renderItem={({ index, item }) => (
+            <ListItem
+              title={`${item.name}`}
+              description={item.observation || ''}
+              accessoryLeft={
+                <Icon name='chevron-right-outline' />
+              }
+            />
+          )}
+          keyExtractor={item => item.id}
+        />
+      </Card>
+    </TouchableOpacity>
   );
 
   return (
@@ -76,24 +77,16 @@ export const BillScreen = ({ navigation }) => {
           accessoryLeft={
             <Icon name='trash-2-outline' />
           }
-          styles={{ flex: 3 }}
         >
-          Encerrar
+          Fechar comanda
         </Button>
         <Button
           accessoryLeft={
-            <Icon name='bell-outline' />
-          }
-          styles={{ flex: 3 }}
-        >
-          Cozinha
-        </Button>
-        <Button onPress={() => navigation.navigate('Order')}
-          accessoryLeft={
             <Icon name='plus' />
           }
-          styles={{ flex: 1 }}
-        />
+        >
+          Novo pedido
+        </Button>
       </Layout>
     </Layout>
   );
