@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { StyleSheet, TouchableOpacity, Image, View } from 'react-native';
-import { Layout, Text, Input, Button } from '@ui-kitten/components';
+import { Layout, Text, Input, Toggle, Button } from '@ui-kitten/components';
 import { AuthContext } from '../context/auth';
+import { PreferencesContext } from '../context/preferences';
 
 export const ProfileScreen = () => {
   const [userName, setUserName] = useState('Nome do Usuário');
@@ -10,6 +11,7 @@ export const ProfileScreen = () => {
   const [userRole, setUserRole] = useState('Função do Usuário');
   const [userAvatar, setUserAvatar] = useState('https://i.pravatar.cc/300');
   const { signOut } = useContext(AuthContext);
+  const { darkTheme, setDarkTheme } = useContext(PreferencesContext);
 
   const selectImage = () => {
     
@@ -54,20 +56,30 @@ export const ProfileScreen = () => {
           label='Função'
           placeholder='Digite sua função'
           onChangeText={setUserRole}
+          disabled={true}
           style={styles.input}
         />
+        <Toggle
+          checked={darkTheme}
+          onChange={setDarkTheme}
+          style={styles.input}
+        >
+          Tema: {darkTheme ? 'Escuro' : 'Claro'}
+        </Toggle>
 
         <Button onPress={saveProfile} style={styles.saveButton}>
           Salvar Modificações
         </Button>
 
         <Button
-            onPress={async () => {
-                await signOut();
-                navigation.navigate('Login');
-            }}
-            style={styles.exitButton}
-        > Sair</Button>
+          onPress={async () => {
+            await signOut();
+            navigation.navigate('Login');
+          }}
+          style={styles.exitButton}
+        >
+          Sair
+        </Button>
 
       </Layout>
     </Layout>
