@@ -14,7 +14,7 @@ export const RootNavigator = () => {
   return (
     <NavigationContainer>
       <Navigator screenOptions={{ headerShown: false }}>
-        {true ? (
+        {signed ? (
           <>
             <Screen name='AppNav'  component={AppNavigator} />
             <Screen name='BillNav' component={BillNavigator} />

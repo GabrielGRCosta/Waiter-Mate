@@ -1,47 +1,49 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Input, Button, Layout, Text } from '@ui-kitten/components';
-import { AuthContext } from '../context/auth'; 
+import { StyleSheet, View, TouchableWithoutFeedback } from 'react-native';
+import { Input, Button, Layout, Text, Icon } from '@ui-kitten/components';
+import { AuthContext } from '../context/auth';
 
 export const LoginScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { signIn,test } = useContext(AuthContext);
+    const [secureTextEntry, setSecureTextEntry] = useState(true);
+    const { signIn } = useContext(AuthContext);
 
+    const toggleSecureEntry = () => {
+        setSecureTextEntry(!secureTextEntry);
+    };
 
-
-
-useEffect(() => {
-    test()
-}, [test]);
-
+    const renderIcon = (props) => (
+        <TouchableWithoutFeedback onPress={toggleSecureEntry}>
+            <Icon {...props} name={secureTextEntry ? 'eye-off' : 'eye'} />
+        </TouchableWithoutFeedback>
+    );
 
     return (
         <Layout style={styles.container}>
-        <Text category='h1' style={styles.title}>WaiterMate</Text>
-        <Input
-            placeholder='Email'
-            value={email}
-            onChangeText={setEmail}
-            style={styles.input}
-        />
-        <Input
-            placeholder='Password'
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            style={styles.input}
-        />
-        <Button onPress={() => signIn(email,password) } style={styles.button}>
-            Entrar
-        </Button>
-
-
+            <Text category='h1' style={styles.title}>WaiterMate</Text>
+            <Input
+                placeholder='Email'
+                value={email}
+                onChangeText={setEmail}
+                style={styles.input}
+            />
+            <Input
+                placeholder='Password'
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={secureTextEntry}
+                accessoryRight={renderIcon}
+                style={styles.input}
+            />
+            <Button onPress={() => signIn(email, password)} style={styles.button}>
+                Entrar
+            </Button>
         </Layout>
     );
-    };
+};
 
-    const styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
@@ -57,4 +59,4 @@ useEffect(() => {
     button: {
         marginTop: 10,
     },
-    });
+});
