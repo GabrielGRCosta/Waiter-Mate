@@ -22,10 +22,9 @@ const orders = [
 ];
 
 export const BillScreen = ({ navigation }) => {
-  //<TouchableOpacity onPress={() => navigation.navigate('BillNav', { screen: 'Order', params: { order: order }})}>
   const renderOrder = ({ item: order }) => (
-    <TouchableOpacity onPress={() => navigation.navigate('Order', {order: order})}>
       <Card
+        onPress={() => navigation.navigate('BillNav', { screen: 'Order', params: { order } })}
         status={order.status === 'served' ? 'success' : order.status == 'waiting' ? 'warning' : 'danger' }
         header={<Text>Pedido #{order.ord}</Text>}
         style={{ marginBottom: 5 }}
@@ -34,6 +33,7 @@ export const BillScreen = ({ navigation }) => {
           data={order.items}
           renderItem={({ index, item }) => (
             <ListItem
+              disabled
               title={`${item.name}`}
               description={item.observation || ''}
               accessoryLeft={
@@ -44,7 +44,6 @@ export const BillScreen = ({ navigation }) => {
           keyExtractor={item => item.id}
         />
       </Card>
-    </TouchableOpacity>
   );
 
   return (

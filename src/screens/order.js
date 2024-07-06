@@ -7,6 +7,7 @@ export const OrderScreen = ({ navigation, route }) => {
 
   const renderOrder = ({ item: order }) => (
     <Card
+      disabled
       status={order.status === 'served' ? 'success' : order.status == 'waiting' ? 'warning' : 'danger' }
       header={<Text>Pedido #{order.ord}</Text>}
       style={{ marginBottom: 5 }}
@@ -17,9 +18,6 @@ export const OrderScreen = ({ navigation, route }) => {
           <ListItem
             title={`${item.name}`}
             description={item.observation || ''}
-            accessoryLeft={
-              <Icon name='chevron-right-outline' />
-            }
             accessoryRight={
               <Icon name='trash' />
             }
@@ -47,12 +45,9 @@ export const OrderScreen = ({ navigation, route }) => {
       />
       <Divider />
       <Layout style={{ padding: 15, flex: 1 }}>
-        <List
-          data={[ order ]}
-          renderItem={renderOrder}
-          keyExtractor={order => order.id}
-          style={{ padding: 10 }}
-        />
+        <Layout style={{ padding: 10, flex: 1 }} level='2'>
+          {renderOrder({ item: order })}
+        </Layout>
       </Layout>
       <Layout style={{ padding: 15, flexDirection: 'row', justifyContent: 'space-between' }}>
         <Button
