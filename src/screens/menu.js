@@ -246,8 +246,8 @@ export const MenuScreen = () => {
 
   const filteredMenuItems = searchText
     ? menuItems.filter(item =>
-        item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchText.toLowerCase()),
+        item.nome.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.descricao.toLowerCase().includes(searchText.toLowerCase()),
       )
     : menuItems;
 
