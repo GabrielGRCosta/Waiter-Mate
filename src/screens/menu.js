@@ -1,85 +1,235 @@
-import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
-import { Layout, List, TopNavigation, Icon, Button,Input } from '@ui-kitten/components';
+import React, { useState, useEffect } from 'react';
+import {  StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { Layout, List, TopNavigation, Icon, Button,Input,Modal} from '@ui-kitten/components';
 import {MenuItem} from './menuItem';
+import { firestore } from '../config/firebaseConnection';
+import {  doc,  getFirestore, getDoc, updateDoc, collection, addDoc, getDocs,query, deleteDoc } from "firebase/firestore";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as ImagePicker from 'expo-image-picker';
+import Toast from 'react-native-toast-message';
+
 
 export const MenuScreen = () => {
   const [viewMode, setViewMode] = useState('cliente'); 
-  const [menuItems, setMenuItems] = useState([
-    {
-      id: 1,
-      name: 'Pizza Margherita',
-      price: '29.90',
-      image: 'https://picsum.photos/200/300?random=1',
-      description: 'Tomate, queijo mozzarella, manjericão fresco e azeite de oliva.',
-    },
-    {
-      id: 2,
-      name: 'Hambúrguer Clássico',
-      price: '25.50',
-      image: 'https://picsum.photos/200/300?random=2',
-      description: 'Pão de brioche, carne bovina, queijo cheddar, alface, tomate e molho especial.',
-    },
-    {
-      id: 3,
-      name: 'Salada Caesar',
-      price: '19.90',
-      image: 'https://picsum.photos/200/300?random=3',
-      description: 'Alface romana, frango grelhado, queijo parmesão, croutons e molho Caesar.',
-    },
-    {
-      id: 4,
-      name: 'Sorvete de Chocolate',
-      price: '12.00',
-      image: 'https://picsum.photos/200/300?random=4',
-      description: 'Delicioso sorvete de chocolate cremoso.',
-    },
-    {
-      id: 5,
-      name: 'Sushi Combo',
-      price: '45.00',
-      image: 'https://picsum.photos/200/300?random=5',
-      description: 'Variedade de sushis, incluindo nigiris, sashimis e makis.',
-    },
-    {
-      id: 6,
-      name: 'Taco Mexicano',
-      price: '18.90',
-      image: 'https://picsum.photos/200/300?random=6',
-      description: 'Tortilla de milho, carne moída, alface, tomate, queijo cheddar e molho picante.',
-    },
-    {
-      id: 7,
-      name: 'Bolo de Cenoura',
-      price: '15.00',
-      image: 'https://picsum.photos/200/300?random=7',
-      description: 'Bolo fofinho de cenoura com cobertura de chocolate.',
-    },
-    {
-      id: 8,
-      name: 'Lasanha à Bolonhesa',
-      price: '32.00',
-      image: 'https://picsum.photos/200/300?random=8',
-      description: 'Massa de lasanha, molho bolonhesa, queijo mozzarella e parmesão gratinado.',
-    },
-    {
-      id: 9,
-      name: 'Café Espresso',
-      price: '7.50',
-      image: 'https://picsum.photos/200/300?random=9',
-      description: 'Café espresso forte e aromático, perfeito para qualquer momento do dia.',
-    },
-    {
-      id: 10,
-      name: 'Suco de Laranja',
-      price: '8.00',
-      image: 'https://picsum.photos/200/300?random=10',
-      description: 'Suco de laranja fresco e natural, sem açúcar adicionado.',
-    },
-  // Adicione mais itens conforme necessário
-]);
+  const [menuItems, setMenuItems] = useState([]);
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchText, setSearchText] = useState('');
+  const [userRole, setUserRole] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [nome, setNome] = useState('');
+  const [preco, setPreco] = useState('');
+  const [descricao, setDescricao] = useState('');
+  const [imagem, setImagem] = useState(null);
+  const [modalMode, setModalMode] = useState('add');
+  const [currentItemId, setCurrentItemId] = useState(null);
+  const db = getFirestore();
+  let userStorage;
+
+  const cardapioRef =  collection(firestore, 'cardapio');
+
+  async function getUserIdFromStorage() {
+    try {
+      console.log('Recuperando ID de usuário do AsyncStorage');
+      const userString = await AsyncStorage.getItem('user');
+      if (userString !== null) {
+        userStorage = JSON.parse(userString);
+        return userStorage.email;
+      } else {
+        console.log('Nenhum ID de usuário encontrado no AsyncStorage');
+        return null;
+      }
+    } catch (error) {
+      console.error('Erro ao recuperar o usuário do AsyncStorage:', error);
+      return null;
+    }
+  }
+  
+  async function fetchUserFromFirestore(user) {
+    const userRef = doc(db, 'usuarios', user);
+    try {
+      const docSnap = await getDoc(userRef);
+      if (docSnap.exists()) {
+        return docSnap.data();
+      } else {
+        console.log('Nenhum usuário encontrado com esse ID');
+        return null;
+      }
+    } catch (error) {
+      console.error('Erro ao buscar usuário no Firestore:', error);
+      return null;
+    }
+  }
+
+  const fetchPratos = async () => {
+    const q = query(collection(db, "cardapio"));
+    const querySnapshot = await getDocs(q);
+    const pratosList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setMenuItems(pratosList);
+  };
+  
+  async function getUserData() {
+    const user = await getUserIdFromStorage();
+    if (user) {
+      const userData = await fetchUserFromFirestore(user);
+      setUserRole(userData.role);
+    }
+  }
+
+  useEffect(() => {
+    getUserData();
+    fetchPratos();
+  }, []); 
+
+  const savePrato = () => {
+    console.log('Salvando prato');
+    if (modalMode === 'add') {
+      addPrato(); 
+    } else if (modalMode === 'edit') {
+      updatePrato(); 
+    }
+    setModalVisible(false);
+  };
+
+
+  const addPrato = async () => {
+    const novoPrato = {
+      nome,
+      preco,
+      imagem,
+      descricao,
+    };
+  
+    try {
+      const docRef = await addDoc(cardapioRef, novoPrato);
+      const novoPratoId = docRef.id;
+      const novoPratoComId = { ...novoPrato, id: novoPratoId };
+  
+      Toast.show({
+        type: 'success',
+        text1: 'Prato adicionado',
+        text2: 'O prato foi adicionado com sucesso ao cardápio.',
+        visibilityTime: 4000
+      });
+      setMenuItems(currentItems => [...currentItems, novoPratoComId]);
+      setNome('');
+      setPreco('');
+      setDescricao('');
+      setImagem(null);
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Houve um erro ao adicionar o prato.'
+      });
+    }
+  };
+
+  const updatePrato = async () => {
+    console.log('Atualizando prato')
+    const pratoRef = doc(db, "cardapio", currentItemId);
+    const updatedPrato = {
+      id: currentItemId,
+      nome: nome,
+      preco: parseFloat(preco), 
+      descricao: descricao,
+      imagem: imagem,
+    };
+
+    try {
+      await updateDoc(pratoRef, {
+        nome: updatedPrato.nome,
+        preco: updatedPrato.preco, 
+        descricao: updatedPrato.descricao,
+        imagem: updatedPrato.imagem,
+      });
+      Toast.show({
+        type: 'success',
+        text1: 'Prato atualizado',
+        text2: 'O prato foi atualizado com sucesso no cardápio.',
+        visibilityTime: 4000
+      });
+      setMenuItems(currentItems =>
+        currentItems.map(item =>
+          item.id === updatedPrato.id ? { ...item, ...updatedPrato } : item
+        )
+      );
+      console.log("Prato atualizado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao atualizar o prato:", error);
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Houve um erro ao atualizar o prato.'
+      });
+    }
+  };
+
+
+  const handleEdit = (item) => {
+    openEditModal(item);
+  };
+
+  const handleDelete = async (item) => {
+
+    try {
+      const itemRef = doc(db, "cardapio", item.id);
+
+      await deleteDoc(itemRef);
+      Toast.show({
+        type: 'success',
+        text1: 'Prato removido',
+        text2: 'O prato foi removido com sucesso do cardápio.',
+        visibilityTime: 4000
+      });
+      console.log("Item deletado com sucesso:", item.id);
+      setMenuItems(menuItems.filter(i => i.id !== item.id));
+    } catch (error) {
+      console.error("Erro ao deletar o item:", error);
+      Toast.show({
+        type: 'error',
+        text1: 'Erro',
+        text2: 'Houve um erro ao remover o prato.'
+      });
+    }
+  };
+
+  const openAddModal = () => {
+    setModalMode('add');
+    setNome('');
+    setPreco('');
+    setDescricao('');
+    setImagem(null);
+    setModalVisible(true);
+  };
+
+
+  const openEditModal = (item) => {
+    console.log('Abrindo modal de edição');
+    setModalMode('edit');
+    setCurrentItemId(item.id); 
+    setNome(item.nome);
+    setPreco(String(item.preco ?? ''));
+    setDescricao(item.descricao);
+    setImagem(item.imagem); 
+    setModalVisible(true);
+  };
+
+  const selectImage = async () => {
+    console.log('Selecionando imagem da galeria');
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      base64: true,
+      quality: 1,
+  });
+
+    if (!result.canceled) {
+        console.log("avatar setado")
+        setImagem(result.assets[0].base64);
+      }
+  };
+
 
   const toggleSearchBar = () => {
     setSearchVisible(!searchVisible);
@@ -87,8 +237,6 @@ export const MenuScreen = () => {
       setSearchText(''); 
     }
   };
-
-
 
   const renderSearchButton = () => (
     <Button appearance='ghost' onPress={toggleSearchBar} accessoryLeft={<Icon name="search-outline" />}>
@@ -106,18 +254,18 @@ export const MenuScreen = () => {
   return (
     <Layout style={styles.container}>
       <TopNavigation
-      alignment="center"
-      
-      accessoryLeft={() => (
-        <>
-          <Button appearance='ghost' onPress={() => setViewMode('cliente')}>Cliente</Button>
-          <Button appearance='ghost' onPress={() => setViewMode('garcom')}>Garçom</Button>
-        </>
-      )}
-      accessoryRight={renderSearchButton}
-      style={styles.pageTitle}
-    />
-    {searchVisible && (
+        alignment="center"
+        accessoryLeft={() => (
+          <>
+            <Button appearance='ghost' onPress={() => setViewMode('cliente')}>Cliente</Button>
+            <Button appearance='ghost' onPress={() => setViewMode('garcom')}>Garçom</Button>
+          </>
+        )}
+        accessoryRight={renderSearchButton}
+        style={styles.pageTitle}
+      />
+
+      {searchVisible && (
         <Input
           placeholder="Search..."
           value={searchText}
@@ -125,19 +273,147 @@ export const MenuScreen = () => {
           style={styles.searchInput}
         />
       )}
+
       <List
         style={styles.listMenu}
         data={filteredMenuItems}
-        renderItem={({ item }) => <MenuItem item={item} viewMode={viewMode} />}
+        renderItem={({ item }) => (
+          <MenuItem
+            key={item.id} 
+            item={item}
+            viewMode={viewMode}
+            role={userRole}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        )}
         keyExtractor={item => item.id.toString()}
       />
+
+      {userRole === 'gerente' ? <TouchableOpacity
+          style={styles.fab}
+          onPress={() => openAddModal()}>
+          <Icon name="plus" fill="#fff" style={styles.icon} />
+        </TouchableOpacity> : <></>}
+
+      
+
+      <Modal
+        animationType='slide'
+        visible={modalVisible}
+        backdropStyle={styles.backdrop}
+        onBackdropPress={() => setModalVisible(false)}>
+        <Layout style={styles.modalView}>
+          <TouchableOpacity onPress={selectImage} style={styles.imagePicker}>
+              {imagem ? (
+                <Image  source={{ uri: `data:image/png;base64,${imagem}` }} style={styles.image} />
+              ) : (
+                <Icon name="image-outline" width={32} height={32} fill="#8F9BB3" />
+              )}
+            </TouchableOpacity>
+            <Input
+              placeholder="Nome do Item"
+              value={nome}
+              onChangeText={setNome}
+              style={styles.input}
+            />
+            <Input
+              placeholder="Preço"
+              keyboardType="numeric"
+              value={preco}
+              onChangeText={setPreco}
+              style={styles.input}
+            />
+            <Input
+              placeholder="Descrição"
+              value={descricao}
+              onChangeText={setDescricao}
+              multiline={true}
+              textStyle={{ minHeight: 64 }}
+              style={styles.input}
+            />
+            <Button style={{marginTop:60}} onPress={() => (savePrato())}>Salvar</Button>
+        </Layout>
+      </Modal>
+
+      <Toast />
     </Layout>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex:1
+  },
+  fab: {
+    position: 'absolute',
+    right: 30,
+    bottom: 30,
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'blue',
+    borderRadius: 30,
+    zIndex: 10, 
+    elevation: 6,
+  },
+  icon: {
+    width: 32,
+    height: 32,
+  },
+  centeredView: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  backdrop: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    margin: 20,
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  imagePicker: {
+    marginTop:0,
+    marginBottom: 15,
+    alignItems: 'center',
+  },
+  image: {
+    width: 100,
+    height: 100,
+    marginBottom: 10,
+  },
+  input: {
+    width: 200,
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   pageTitle: {
     marginVertical: 30,

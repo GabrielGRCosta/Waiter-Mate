@@ -56,6 +56,20 @@ function AuthProvider({ children }) {
       console.error(e);
     }
   }
+//Criação de usuário no Firestore
+//   const addUserToFirestore = () => {
+//     console.log("Adicionando usuário ao Firestore");
+//     const userId = userData.email; // Substitua isso pelo UID real do usuário
+
+//     // Inserir um novo documento na coleção 'usuarios'
+//     setDoc(doc(firestore, 'usuarios', userId), userData)
+//       .then(() => {
+//         console.log("Usuário inserido com sucesso!");
+//       })
+//       .catch((error) => {
+//         console.error("Erro ao inserir usuário: ", error);
+//       });
+// };
 
   return (
     <AuthContext.Provider value={{ signed: !!user, user, signIn, signUp, signOut }}>

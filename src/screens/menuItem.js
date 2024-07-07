@@ -1,24 +1,44 @@
 import React, { useState } from 'react';
-import { StyleSheet, Image, View } from 'react-native';
-import { Layout, Text, Card } from '@ui-kitten/components';
+import { StyleSheet, Image, View, TouchableOpacity } from 'react-native';
+import { Layout, Text, Card, Icon } from '@ui-kitten/components';
 
-export const MenuItem = ({ item, viewMode }) => {
+export const MenuItem = ({ item, viewMode, onEdit, onDelete,role }) => {
   const [expanded, setExpanded] = useState(false);
 
   const renderClienteView = () => (
     <> 
-    <Layout style={styles.container}>
-      <Image source={{ uri: item.image }} style={styles.image} />
-      <Text style={styles.name}>{item.name}</Text>
-      <Text style={styles.price}>{`R$ ${item.price}`}</Text>
-    </Layout>
-    {expanded && <Text style={styles.description}>{item.description}</Text>}
+      <Layout style={styles.container}>
+        <Image source={{ uri: `data:image/png;base64,${item.imagem}` }} style={styles.image} />
+        <Text style={styles.name}>{item.nome}</Text>
+        <Text style={styles.price}>{`R$ ${item.preco}`}</Text>
+        {role === 'gerente' ? 
+          <>
+          <TouchableOpacity onPress={() => onEdit(item)}>
+            <Icon name="edit-outline" fill="#000" style={styles.icon} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => onDelete(item)}>
+            <Icon name="trash-2-outline" fill="#000" style={styles.icon} />
+          </TouchableOpacity>
+        </>
+        : <></>}
+      </Layout>
+      {expanded && <Text style={styles.description}>{item.descricao}</Text>}
     </>
   );
 
   const renderGarcomView = () => (
     <View style={styles.garcomContainer}>
-      <Text style={styles.name}>{item.name}</Text>
+      <Text style={styles.name}>{item.nome}</Text>
+      {role === 'gerente' ? 
+          <>
+          <TouchableOpacity onPress={() => onEdit(item)}>
+            <Icon name="edit-outline" fill="#000" style={styles.icon} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => onDelete(item)}>
+            <Icon name="trash-2-outline" fill="#000" style={styles.icon} />
+          </TouchableOpacity>
+        </>
+        : <></>}
     </View>
   );
 
@@ -31,11 +51,16 @@ export const MenuItem = ({ item, viewMode }) => {
 
 const styles = StyleSheet.create({
   card: {
-    marginVertical: 0,
+    marginVertical: 0
   },
   container: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  garcomContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   image: {
     width: 50,
@@ -50,5 +75,10 @@ const styles = StyleSheet.create({
   },
   description: {
     marginTop: 8,
+  },
+  icon: {
+    width: 25,
+    height: 25,
+    marginLeft: 10,
   },
 });
